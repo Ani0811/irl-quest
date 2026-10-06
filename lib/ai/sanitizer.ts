@@ -3,14 +3,18 @@
  * Strips markdown code blocks, conversational preambles, and extracts the outermost JSON object.
  */
 export function extractJsonFromCompletion(raw: string): unknown {
-  let cleaned = raw.trim();
-
-  // Strip Markdown code block wrappers if present
-  if (cleaned.startsWith("```")) {
-    cleaned = cleaned.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+  if (!raw || typeof raw !== "string") {
+    throw new Error("Invalid or empty raw completion provided.");
   }
 
-  // Find outermost curly braces to ignore any conversational greetings or postambles
+  let cleaned = raw.trim();
+
+  // Strip Markdown code block wrappers if present (e.g., ```json ... ``` or ``` ... ```)
+  if (cleaned.includes("```")) {
+    cleaned = cleaned.replace(/```(?:json)?/gi, "").replace(/```/g, "").trim();
+  }
+
+  // Find outermost curly braces to isolate the JSON object from preamble/postscript
   const firstBrace = cleaned.indexOf("{");
   const lastBrace = cleaned.lastIndexOf("}");
 
@@ -22,11 +26,12 @@ export function extractJsonFromCompletion(raw: string): unknown {
 
   try {
     return JSON.parse(jsonSubstring);
-  } catch (error) {
-    // Attempt minor recovery: clean trailing commas before closing braces/brackets
+  } catch {
+    // Attempt recovery: remove trailing commas before closing braces/brackets
     const sanitized = jsonSubstring
-      .replace(/,\s*}/g, "}")
-      .replace(/,\s*\]/g, "]");
+      .replace(/,\s*([}\]])/g, "$1")
+      .trim();
+
     return JSON.parse(sanitized);
   }
 }

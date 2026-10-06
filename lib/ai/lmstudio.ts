@@ -2,7 +2,7 @@ import { AIProvider, ProviderHealth } from "./provider";
 import { QuestRequest, QuestResponse, QuestResponseSchema } from "../quests/schema";
 import { SYSTEM_PROMPT, buildUserPrompt } from "./prompts";
 import { extractJsonFromCompletion } from "./sanitizer";
-import { validateQuestSafety } from "../safety/validator";
+import { validateQuestSafety, formatSafetyDirective } from "../safety/validator";
 import { getFallbackQuest } from "../quests/fallback";
 
 export class LMStudioProvider implements AIProvider {

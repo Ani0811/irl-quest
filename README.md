@@ -16,12 +16,17 @@ Most modern AI applications are designed to maximize screen time, engagement met
 
 **IRL Quest** does the exact opposite. It uses a locally running open-weight language model to generate spontaneous, low-friction micro-adventures in the physical world. The moment your quest is generated, the app enters **Touch Grass Mode**—a hyper-minimal countdown screen that tells you to put your phone away and step outside. When you return, you record a brief reflection, archived 100% privately in your browser.
 
-```text
-Traditional AI Apps:
-User ──► Prompt ──► Endless Chat / Scroll ──► Screen Time Maximized
+```mermaid
+flowchart TD
+    subgraph Traditional["Traditional AI Apps (Screen-Maximizing)"]
+        direction TB
+        T1["User"] --> T2["Chat Prompt"] --> T3["Endless Screen Time & Scroll 📱"]
+    end
 
-IRL Quest:
-User ──► Preferences ──► Local AI ──► PUT PHONE DOWN ──► Real World ──► Return ──► Reflection
+    subgraph IRL["IRL Quest (Screen-Minimizing)"]
+        direction TB
+        Q1["User"] --> Q2["Preferences"] --> Q3["Local AI Generation"] --> Q4["TOUCH GRASS MODE<br/>(Put Phone Down) 🛑📱"] --> Q5["Physical World 🌿"] --> Q6["Return & Reflection 📓"]
+    end
 ```
 
 > **The successful user spends less time using the application, not more.**
@@ -40,45 +45,37 @@ User ──► Preferences ──► Local AI ──► PUT PHONE DOWN ──►
 
 ## Technical Architecture
 
-```text
-                  USER
-                   │
-                   ▼
-          ┌─────────────────┐
-          │ Next.js Client  │  (Tailwind CSS, React, Spartan UX)
-          │  - Quest Setup  │
-          │  - Touch Grass  │
-          │  - Reflection   │
-          │  - Local Store  │
-          └────────┬────────┘
-                   │ POST /api/quest/generate
-                   ▼
-          ┌─────────────────┐
-          │  Next.js API    │
-          │  Route Handler  │
-          └────────┬────────┘
-                   │
-           ┌───────┴────────┐
-           ▼                ▼
-   ┌───────────────┐ ┌──────────────┐
-   │  Zod Schema   │ │ Deterministic│
-   │  Validation   │ │ Safety Engine│
-   └───────┬───────┘ └──────┬───────┘
-           └────────┬───────┘
-                    ▼
-          ┌───────────────────┐
-          │   AI Provider     │  (Model-Agnostic Abstraction)
-          └─────────┬─────────┘
-                    ▼
-          ┌───────────────────┐
-          │  LM Studio Local  │  (OpenAI-Compatible REST Endpoint)
-          │  http://localhost │
-          │       :1234       │
-          └─────────┬─────────┘
-                    ▼
-          ┌───────────────────┐
-          │ Open-Weight Model │  (e.g., Llama 3.1 8B Instruct Q4_K_M)
-          └───────────────────┘
+```mermaid
+flowchart TD
+    User["👤 User"] --> Client["💻 Next.js Frontend (React / Tailwind)"]
+    
+    subgraph Frontend["Client-Side (Spartan UX)"]
+        Client --> Setup["Quest Setup (/quest)"]
+        Client --> Active["Touch Grass Mode (/active)"]
+        Client --> Complete["Reflection & Stats (/complete)"]
+        Active -. Local Storage .-> Store[("Browser LocalStorage<br/>100% Private")]
+        Complete -. Persist .-> Store
+    end
+
+    Setup -->|"POST /api/quest/generate"| API["⚙️ Next.js API Route Handler"]
+
+    subgraph Backend["Validation & Provider Layer"]
+        API --> Zod{"Zod Schema Validation"}
+        Zod -->|Pass| Safety{"Deterministic Safety Engine<br/>(Regex / Keyword Guardrails)"}
+        Zod -->|Fail| Retry["Retry / Safe Fallback"]
+        Safety -->|Hazard| Retry
+    end
+
+    Safety -->|Validated Request| Provider["AI Provider Abstraction"]
+
+    subgraph LocalInference["Local Sovereign Inference"]
+        Provider -->|"HTTP POST /v1/chat/completions"| LMStudio["LM Studio Local Server<br/>http://localhost:1234"]
+        LMStudio --> Model["Open-Weight Instruct Model<br/>(Meta-Llama-3.1-8B-Instruct Q4_K_M)"]
+    end
+
+    Model -. Generated Quest JSON .-> Backend
+    Safety -->|Approved Quest| Active
+    Retry -->|Safe Fallback| Active
 ```
 
 ---
@@ -217,5 +214,6 @@ To ship a reliable, high-craft project within a 6-day sprint, IRL Quest intentio
 ## License
 
 This project is open-source and released under the [MIT License](LICENSE).
-#   i r l - q u e s t  
+#   i r l - q u e s t 
+ 
  

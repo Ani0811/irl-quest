@@ -3,15 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getActiveQuest, clearActiveQuest, ActiveQuestState } from "@/lib/storage/activeQuest";
-import { CheckCircle2, BookOpen, RotateCcw, Sparkles } from "lucide-react";
-
-interface JournalEntry {
-  id: string;
-  quest: ActiveQuestState["quest"];
-  completedAt: number;
-  actualDurationMinutes: number;
-  reflection: string;
-}
+import { saveJournalEntry, JournalEntry } from "@/lib/storage/journal";
+import { CheckCircle2, BookOpen, RotateCcw, Sparkles, ArrowRight } from "lucide-react";
 
 export default function CompleteQuestPage() {
   const router = useRouter();
@@ -35,16 +28,7 @@ export default function CompleteQuestPage() {
       reflection: skip ? "(No reflection recorded)" : reflectionText.trim(),
     };
 
-    // Save to local journal storage array
-    try {
-      const existingRaw = localStorage.getItem("irl_quest_journal_history");
-      const history: JournalEntry[] = existingRaw ? JSON.parse(existingRaw) : [];
-      history.unshift(entry);
-      localStorage.setItem("irl_quest_journal_history", JSON.stringify(history));
-    } catch (e) {
-      console.warn("Could not persist journal entry", e);
-    }
-
+    saveJournalEntry(entry);
     clearActiveQuest();
     setSaved(true);
   };
@@ -52,7 +36,7 @@ export default function CompleteQuestPage() {
   if (!questState && !saved) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#0c0f0d] text-neutral-300 p-6 text-center space-y-4">
-        <h2 className="text-xl font-bold text-white">No Completed Mission Found</h2>
+        <h2 className="text-xl font-bold text-white">No Active Mission Found</h2>
         <p className="text-sm text-neutral-400 max-w-sm">
           Start a micro-adventure from the home screen first!
         </p>
@@ -77,13 +61,19 @@ export default function CompleteQuestPage() {
             Mission Logged to Journal
           </h1>
           <p className="text-sm text-neutral-400 max-w-md">
-            Your reflection and physical-world adventure have been securely archived in your browser storage.
+            Your reflection and physical-world adventure have been securely archived in your local browser storage.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
           <button
+            onClick={() => router.push("/journal")}
+            className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-950"
+          >
+            <BookOpen className="w-4 h-4" /> View in Journal
+          </button>
+          <button
             onClick={() => router.push("/")}
-            className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm transition flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-neutral-800 hover:border-neutral-700 text-neutral-300 hover:text-white font-medium text-sm transition flex items-center justify-center gap-2"
           >
             <RotateCcw className="w-4 h-4" /> Start New Quest
           </button>

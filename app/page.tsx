@@ -20,9 +20,11 @@ import {
   CheckCircle2,
   ArrowRight,
   Play,
+  BookOpen,
 } from "lucide-react";
 import { QuestCategory, QuestDuration, QuestDifficulty, QuestResponse } from "@/lib/quests/schema";
 import { saveActiveQuest, getActiveQuest, ActiveQuestState } from "@/lib/storage/activeQuest";
+import { getJournalEntries, calculateUserStats, UserStats } from "@/lib/storage/journal";
 
 interface HealthStatus {
   connected: boolean;
@@ -92,6 +94,7 @@ export default function HomePage() {
   const [healthLoading, setHealthLoading] = useState<boolean>(true);
 
   const [activeQuest, setActiveQuestState] = useState<ActiveQuestState | null>(null);
+  const [userStats, setUserStats] = useState<UserStats | null>(null);
 
   const [category, setCategory] = useState<QuestCategory>("nature");
   const [duration, setDuration] = useState<QuestDuration>(10);
@@ -102,7 +105,7 @@ export default function HomePage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showJson, setShowJson] = useState<boolean>(false);
 
-  // Check health and active quest on mount
+  // Check health, active quest, and journal on mount
   const checkHealth = async () => {
     setHealthLoading(true);
     try {
@@ -121,9 +124,15 @@ export default function HomePage() {
 
   useEffect(() => {
     checkHealth();
+
     const existing = getActiveQuest();
     if (existing && existing.status === "in_progress") {
       setActiveQuestState(existing);
+    }
+
+    const entries = getJournalEntries();
+    if (entries.length > 0) {
+      setUserStats(calculateUserStats(entries));
     }
   }, []);
 
@@ -178,7 +187,7 @@ export default function HomePage() {
                   IRL Quest
                 </h1>
                 <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-800/60 text-emerald-300">
-                  Day 3: Touch Grass Mode
+                  Day 4: Journal &amp; Stats
                 </span>
               </div>
               <p className="text-xs text-neutral-400">
@@ -187,10 +196,24 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Local LM Studio Status Badge */}
-          <div className="flex items-center gap-2 self-stretch sm:self-auto">
+          {/* Right Header Navigation: Journal Link & LM Studio Status */}
+          <div className="flex items-center gap-2.5 self-stretch sm:self-auto justify-between sm:justify-start">
+            <button
+              onClick={() => router.push("/journal")}
+              className="px-3 py-1.5 rounded-lg border border-[#233128] hover:border-emerald-600/50 bg-[#141b16] hover:bg-[#1a231e] text-xs font-medium text-neutral-300 hover:text-white transition flex items-center gap-1.5"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Journal</span>
+              {userStats && userStats.totalQuests > 0 && (
+                <span className="ml-0.5 px-1.5 py-0.2 rounded-full bg-emerald-950 border border-emerald-800 text-[10px] text-emerald-300 font-mono">
+                  {userStats.totalQuests}
+                </span>
+              )}
+            </button>
+
+            {/* Local LM Studio Status Badge */}
             <div
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-mono w-full sm:w-auto justify-between sm:justify-start ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-mono ${
                 health?.connected
                   ? "bg-emerald-950/40 border-emerald-800/50 text-emerald-300"
                   : "bg-amber-950/30 border-amber-800/40 text-amber-300"
@@ -206,12 +229,12 @@ export default function HomePage() {
                 />
                 <span>
                   {healthLoading
-                    ? "Checking Local AI..."
+                    ? "Checking AI..."
                     : health?.connected
-                    ? `LM Studio Active (${
-                        health.models?.[0]?.split("/").pop() || "Loaded Model"
+                    ? `LM Studio (${
+                        health.models?.[0]?.split("/").pop() || "Active"
                       })`
-                    : "LM Studio Offline (Catalog Mode)"}
+                    : "LM Studio Offline (Catalog)"}
                 </span>
               </div>
 
@@ -257,18 +280,41 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Day 1 & 2 System Context Card */}
+        {/* Quick Journal Stats Ribbon (if user has logged entries) */}
+        {userStats && userStats.totalQuests > 0 && (
+          <div className="p-3.5 rounded-xl border border-[#1b251f] bg-[#111713] flex items-center justify-between text-xs">
+            <div className="flex items-center gap-4 text-neutral-300">
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <strong>{userStats.totalQuests}</strong> quests completed
+              </span>
+              <span className="text-neutral-600">&bull;</span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-emerald-400" />
+                <strong>{userStats.totalMinutes}</strong> min outdoors
+              </span>
+            </div>
+            <button
+              onClick={() => router.push("/journal")}
+              className="text-emerald-400 hover:text-emerald-300 font-medium transition flex items-center gap-1"
+            >
+              Open Journal <ArrowRight className="w-3 h-3" />
+            </button>
+          </div>
+        )}
+
+        {/* System Context Card */}
         <div className="p-4 rounded-xl border border-[#1e2a22] bg-[#121814] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-xs font-medium text-emerald-400 uppercase tracking-wider">
-              <Cpu className="w-4 h-4" /> Local Open-Weight Inference &bull; Deterministic Safety Active
+              <Cpu className="w-4 h-4" /> Local Open-Weight Intelligence &bull; Zero-Cloud Storage
             </div>
             <p className="text-sm text-neutral-300">
               Connected to local inference on{" "}
               <code className="font-mono text-emerald-300 text-xs bg-emerald-950/60 px-1 py-0.5 rounded border border-emerald-900">
                 http://localhost:1234/v1
               </code>
-              . Generates structured JSON micro-quests without cloud dependencies or telemetry.
+              . Quests and journal reflections are kept 100% on your device.
             </p>
           </div>
 
@@ -385,7 +431,7 @@ export default function HomePage() {
           <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#1a231d]">
             <div className="flex items-center gap-2 text-xs text-neutral-400">
               <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              31 Safety &amp; Schema Tests Active (Deterministic Gatekeeper)
+              Deterministic Safety Inspection Active
             </div>
 
             <button
@@ -516,7 +562,7 @@ export default function HomePage() {
                 </p>
               )}
 
-              {/* DAY 3 HERO ACTION BUTTON: Launch Touch Grass Mode */}
+              {/* Launch Touch Grass Mode */}
               <div className="pt-2">
                 <button
                   onClick={handleStartQuest}

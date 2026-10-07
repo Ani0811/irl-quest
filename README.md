@@ -4,9 +4,10 @@
 > Built for the **Hacktoberfest Open-Source AI Challenge — Week 1: Touch Grass**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
-[![Next.js](https://img.shields.io/badge/Next.js-14%2F15-black.svg)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
 [![Local AI](https://img.shields.io/badge/Local_AI-LM_Studio-purple.svg)](https://lmstudio.ai/)
 [![Privacy](https://img.shields.io/badge/Privacy-100%25_Local-blue.svg)](#privacy-first-architecture)
+[![Tests: Vitest](https://img.shields.io/badge/Tests-36%20Passed-emerald.svg)](#testing-and-safety-verification)
 
 ---
 
@@ -20,12 +21,12 @@ Most modern AI applications are designed to maximize screen time, engagement met
 flowchart TD
     subgraph Traditional["Traditional AI Apps (Screen-Maximizing)"]
         direction TB
-        T1["User"] --> T2["Chat Prompt"] --> T3["Endless Screen Time & Scroll 📱"]
+        T1["User"] --> T2["Chat Prompt"] --> T3["Endless Screen Time & Scroll"]
     end
 
     subgraph IRL["IRL Quest (Screen-Minimizing)"]
         direction TB
-        Q1["User"] --> Q2["Preferences"] --> Q3["Local AI Generation"] --> Q4["TOUCH GRASS MODE<br/>(Put Phone Down) 🛑📱"] --> Q5["Physical World 🌿"] --> Q6["Return & Reflection 📓"]
+        Q1["User"] --> Q2["Preferences"] --> Q3["Local AI Generation"] --> Q4["TOUCH GRASS MODE<br/>(Put Phone Down)"] --> Q5["Physical World Activity"] --> Q6["Return & Reflection"]
     end
 ```
 
@@ -35,10 +36,12 @@ flowchart TD
 
 ## Key Features
 
-* **⚡ Local-First Open-Weight AI:** Powered by open-weight models (e.g., Llama 3.1 8B, Qwen 2.5 7B, Mistral 7B) running locally via [LM Studio](https://lmstudio.ai/) or Ollama. Zero cloud API calls, zero per-request costs.
+* **⚡ Local-First Open-Weight AI:** Powered by open-weight models (e.g. `google/gemma-3-4b`, `Meta-Llama-3.1-8B-Instruct`, `Phi-3.5-mini-instruct`) running locally via [LM Studio](https://lmstudio.ai/) or Ollama. Zero cloud API calls, zero per-request costs.
 * **🛡️ Deterministic Safety Guardrails:** AI-generated objectives are strictly inspected by a deterministic regex/keyword code filter that intercepts hazardous activities (trespassing, traffic, hazardous plants, dangerous heights) before anything reaches your screen.
 * **📵 Touch Grass Mode:** An intentional anti-distraction interface with an ambient countdown timer and one message: *"Put your phone away. Go explore."*
+* **🔔 Native Web Audio Chime:** Procedural Tibetan meditation bell synthesized via Web Audio API—100% offline, zero asset downloads.
 * **📓 Sovereign Local Journal:** Your completed quests, timestamps, and personal reflections are stored directly in your browser (`localStorage`). No accounts, no cloud database, zero telemetry.
+* **💾 One-Click JSON Export:** Easily download your entire quest history and reflections as a standard JSON file.
 * **📊 Minimalist Statistics:** Tracks outdoor minutes and quests completed without predatory streak counters or gamified badges.
 
 ---
@@ -47,17 +50,19 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    User["👤 User"] --> Client["💻 Next.js Frontend (React / Tailwind)"]
+    User["User"] --> Client["Next.js Frontend (React / Tailwind)"]
     
     subgraph Frontend["Client-Side (Spartan UX)"]
-        Client --> Setup["Quest Setup (/quest)"]
+        Client --> Setup["Quest Setup (/)"]
         Client --> Active["Touch Grass Mode (/active)"]
-        Client --> Complete["Reflection & Stats (/complete)"]
+        Client --> Complete["Reflection Screen (/complete)"]
+        Client --> Journal["Sovereign Journal (/journal)"]
         Active -. Local Storage .-> Store[("Browser LocalStorage<br/>100% Private")]
         Complete -. Persist .-> Store
+        Journal -. Read & Export .-> Store
     end
 
-    Setup -->|"POST /api/quest/generate"| API["⚙️ Next.js API Route Handler"]
+    Setup -->|"POST /api/quest/generate"| API["Next.js API Route Handler"]
 
     subgraph Backend["Validation & Provider Layer"]
         API --> Zod{"Zod Schema Validation"}
@@ -70,7 +75,7 @@ flowchart TD
 
     subgraph LocalInference["Local Sovereign Inference"]
         Provider -->|"HTTP POST /v1/chat/completions"| LMStudio["LM Studio Local Server<br/>http://localhost:1234"]
-        LMStudio --> Model["Open-Weight Instruct Model<br/>(Meta-Llama-3.1-8B-Instruct Q4_K_M)"]
+        LMStudio --> Model["Open-Weight Instruct Model<br/>(google/gemma-3-4b, Llama 3.1)"]
     end
 
     Model -. Generated Quest JSON .-> Backend
@@ -82,13 +87,14 @@ flowchart TD
 
 ## Prerequisites
 
-1. **Node.js:** `v18.18+` or `v20+`
+1. **Node.js:** `v18.18+`, `v20+`, or `v25+`
 2. **Local Inference Server:**
    * Recommended: [LM Studio](https://lmstudio.ai/)
    * Alternative: [Ollama](https://ollama.ai/)
-3. **An Open-Weight Instruct Model:**
-   * Recommended: `Meta-Llama-3.1-8B-Instruct-GGUF` (Q4_K_M)
-   * Lightweight fallback: `Phi-3.5-mini-instruct-GGUF`
+3. **An Open-Weight Instruct Model (Tested & Verified):**
+   * `google/gemma-3-4b` *(fast, low-memory footprint, ~2.5GB VRAM)*
+   * `Meta-Llama-3.1-8B-Instruct-GGUF` (Q4_K_M)
+   * `Phi-3.5-mini-instruct-GGUF`
 
 ---
 
@@ -96,13 +102,13 @@ flowchart TD
 
 ### 1. Start Your Local Inference Engine
 1. Launch **LM Studio**.
-2. Download `Meta-Llama-3.1-8B-Instruct-GGUF` (or your preferred instruct model).
-3. Open the **Local Server** tab (`<->` icon).
+2. Load your model (e.g. `google/gemma-3-4b` or `Meta-Llama-3.1-8B-Instruct`).
+3. Open the **Local Server** tab (`<->` icon on the left sidebar).
 4. Select the model and click **Start Server** on port `1234`.
 
 ### 2. Clone & Setup IRL Quest
 ```bash
-git clone https://github.com/your-username/irl-quest.git
+git clone https://github.com/Ani0811/irl-quest.git
 cd irl-quest
 npm install
 ```
@@ -116,7 +122,8 @@ cp .env.example .env.local
 Default settings:
 ```env
 LOCAL_AI_BASE_URL=http://localhost:1234/v1
-LOCAL_AI_MODEL=Meta-Llama-3.1-8B-Instruct
+LOCAL_AI_MODEL=google/gemma-3-4b
+LOCAL_AI_TIMEOUT_MS=15000
 NEXT_PUBLIC_APP_MODE=local
 ```
 
@@ -125,6 +132,23 @@ NEXT_PUBLIC_APP_MODE=local
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser. Disconnect your internet connection to verify that everything runs 100% offline!
+
+---
+
+## Testing & Safety Verification
+
+IRL Quest includes a comprehensive test suite powered by [Vitest](https://vitest.dev):
+
+```bash
+npm test
+```
+
+Runs **36 automated unit tests** covering:
+* **Deterministic Safety:** 16 tests covering property trespassing, road traffic, plant/mushroom ingestion, dangerous climbing, wildlife contact, and nighttime vulnerabilities.
+* **Schema Validation:** 8 tests validating Zod contracts, category constraints, and string limits.
+* **JSON Sanitizer:** 7 tests verifying code-fence stripping, preamble isolation, and trailing comma recovery.
+* **Offline Resilience:** 3 tests verifying catalog fallback integrity across all categories, durations, and difficulties.
+* **Journal Statistics:** 2 tests verifying aggregate metrics calculations.
 
 ---
 
@@ -146,56 +170,51 @@ Open [http://localhost:3000](http://localhost:3000) in your browser. Disconnect 
 ```text
 irl-quest/
 ├── app/
-│   ├── page.tsx            # Landing view
-│   ├── quest/
-│   │   └── page.tsx        # Quest configuration screen
-│   ├── active/
-│   │   └── page.tsx        # Touch Grass Mode (Timer & Objective)
-│   ├── complete/
-│   │   └── page.tsx        # Reflection & completion screen
-│   ├── journal/
-│   │   └── page.tsx        # Local quest journal & export
+│   ├── layout.tsx              # Root HTML shell & dark spartan layout
+│   ├── page.tsx                # Landing & quest configurator
+│   ├── active/page.tsx         # Touch Grass Mode (Timer & Objective)
+│   ├── complete/page.tsx       # Reflection & completion screen
+│   ├── journal/page.tsx        # Sovereign local journal & JSON export
+│   ├── error.tsx               # Error boundary
+│   ├── not-found.tsx           # 404 handler
 │   └── api/
-│       ├── health/route.ts # LM Studio connectivity check
-│       └── quest/route.ts  # Generation, schema check & safety filter
+│       ├── health/route.ts     # LM Studio connectivity check
+│       └── quest/route.ts      # Generation & safety filter
 ├── components/
-│   ├── QuestConfigForm.tsx # Category, duration & difficulty selector
-│   ├── TouchGrassMode.tsx  # Distraction-free active quest view
-│   ├── QuestTimer.tsx      # Low-power countdown timer
-│   ├── ReflectionCard.tsx  # Post-quest reflection input
-│   └── JournalFeed.tsx     # Past quest cards
+│   ├── QuestTimer.tsx          # Resilient epoch countdown timer
+│   ├── TouchGrassMode.tsx      # Anti-distraction active quest screen
+│   ├── JournalFeed.tsx         # Chronological journal cards
+│   └── StatsSummary.tsx        # Minimalist metrics summary
 ├── lib/
 │   ├── ai/
-│   │   ├── provider.ts     # AIProvider interface
-│   │   ├── lmstudio.ts     # LM Studio client
-│   │   ├── prompts.ts      # Modular prompt templates
-│   │   └── sanitizer.ts    # JSON fence stripping & parsing
+│   │   ├── provider.ts         # AIProvider abstraction
+│   │   ├── lmstudio.ts         # LM Studio REST client & 2-tier retry
+│   │   ├── prompts.ts          # System prompt & modular templates
+│   │   └── sanitizer.ts        # Code-fence stripping & JSON extractor
+│   ├── audio/
+│   │   └── chime.ts            # Web Audio API meditation bell synthesizer
 │   ├── safety/
-│   │   ├── dictionary.ts   # Prohibited hazard patterns
-│   │   └── validator.ts    # Deterministic safety inspection
+│   │   ├── dictionary.ts       # Categorized regex hazard rules
+│   │   └── validator.ts        # Deterministic safety gatekeeper
 │   └── storage/
-│       └── journal.ts      # LocalStorage persistence helpers
+│       ├── activeQuest.ts      # Active mission state & epoch timer tracking
+│       └── journal.ts          # LocalStorage CRUD & JSON export
+├── tests/
+│   ├── safety.test.ts          # 16 hazard domain tests
+│   ├── sanitizer.test.ts       # 7 JSON parsing tests
+│   ├── schema.test.ts          # 8 Zod contract tests
+│   ├── offline.test.ts         # 3 offline catalog integrity tests
+│   └── journal.test.ts         # 2 statistics aggregation tests
 ├── docs/
-│   ├── PRODUCT.md          # Product specification & vision
-│   ├── ARCHITECTURE.md     # System architecture & deployment reality
-│   ├── AI.md               # Model guide, prompt architecture & JSON schema
-│   ├── SAFETY.md           # Threat model & deterministic guardrails
-│   └── ROADMAP.md          # 6-day sprint plan & submission details
+│   ├── PRODUCT.md              # Vision, USP, personas, and scope
+│   ├── ARCHITECTURE.md         # System architecture & deployment realities
+│   ├── AI.md                   # Local inference, models, licenses, & prompt design
+│   ├── SAFETY.md               # Threat modeling & deterministic guardrails
+│   └── ROADMAP.md              # 6-day sprint schedule & Hacktoberfest strategy
 ├── .env.example
 ├── package.json
 └── README.md
 ```
-
----
-
-## Comprehensive Documentation
-
-For exhaustive technical blueprints, consult the `/docs` directory:
-* [Product Specification](docs/PRODUCT.md) — Product vision, USP, target users, and MVP boundaries.
-* [Architecture Blueprint](docs/ARCHITECTURE.md) — System design, data flow, and provider abstraction.
-* [AI & Prompt Architecture](docs/AI.md) — Model requirements, prompt templates, and structured JSON contracts.
-* [Deterministic Safety Model](docs/SAFETY.md) — Threat models, regex dictionary, and retry protocol.
-* [Implementation Roadmap](docs/ROADMAP.md) — 6-day sprint schedule, outdoor testing, and submission plan.
 
 ---
 
@@ -214,6 +233,3 @@ To ship a reliable, high-craft project within a 6-day sprint, IRL Quest intentio
 ## License
 
 This project is open-source and released under the [MIT License](LICENSE).
-#   i r l - q u e s t 
- 
- 

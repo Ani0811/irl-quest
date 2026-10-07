@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Compass,
   TreePine,
@@ -17,8 +18,11 @@ import {
   ChevronUp,
   AlertCircle,
   CheckCircle2,
+  ArrowRight,
+  Play,
 } from "lucide-react";
 import { QuestCategory, QuestDuration, QuestDifficulty, QuestResponse } from "@/lib/quests/schema";
+import { saveActiveQuest, getActiveQuest, ActiveQuestState } from "@/lib/storage/activeQuest";
 
 interface HealthStatus {
   connected: boolean;
@@ -82,10 +86,14 @@ const DIFFICULTIES: { id: QuestDifficulty; label: string }[] = [
 ];
 
 export default function HomePage() {
+  const router = useRouter();
+
   const [health, setHealth] = useState<HealthStatus | null>(null);
   const [healthLoading, setHealthLoading] = useState<boolean>(true);
 
-  const [category, setCategory] = useState<QuestCategory>("exploration");
+  const [activeQuest, setActiveQuestState] = useState<ActiveQuestState | null>(null);
+
+  const [category, setCategory] = useState<QuestCategory>("nature");
   const [duration, setDuration] = useState<QuestDuration>(10);
   const [difficulty, setDifficulty] = useState<QuestDifficulty>("easy");
 
@@ -94,7 +102,7 @@ export default function HomePage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showJson, setShowJson] = useState<boolean>(false);
 
-  // Check LM Studio health on mount
+  // Check health and active quest on mount
   const checkHealth = async () => {
     setHealthLoading(true);
     try {
@@ -113,6 +121,10 @@ export default function HomePage() {
 
   useEffect(() => {
     checkHealth();
+    const existing = getActiveQuest();
+    if (existing && existing.status === "in_progress") {
+      setActiveQuestState(existing);
+    }
   }, []);
 
   const handleGenerate = async () => {
@@ -145,6 +157,12 @@ export default function HomePage() {
     }
   };
 
+  const handleStartQuest = () => {
+    if (!result?.quest) return;
+    saveActiveQuest(result.quest);
+    router.push("/active");
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#0c0f0d] text-[#e5e7eb]">
       {/* Top Header */}
@@ -160,7 +178,7 @@ export default function HomePage() {
                   IRL Quest
                 </h1>
                 <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-800/60 text-emerald-300">
-                  Day 1 Gate: Foundation
+                  Day 3: Touch Grass Mode
                 </span>
               </div>
               <p className="text-xs text-neutral-400">
@@ -216,18 +234,41 @@ export default function HomePage() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-8 space-y-8">
-        {/* Day 1 Setup & Architecture Banner */}
+        {/* Active Quest Alert Banner if one is running in background */}
+        {activeQuest && (
+          <div className="p-4 rounded-xl border border-emerald-500/50 bg-emerald-950/40 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 rounded-full bg-emerald-400 animate-ping" />
+              <div>
+                <p className="text-sm font-bold text-white">
+                  Quest In Progress: {activeQuest.quest.title}
+                </p>
+                <p className="text-xs text-emerald-300/80">
+                  Put your device away or resume your timer.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => router.push("/active")}
+              className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs transition flex items-center gap-1.5 shrink-0"
+            >
+              Resume Touch Grass Mode <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
+        {/* Day 1 & 2 System Context Card */}
         <div className="p-4 rounded-xl border border-[#1e2a22] bg-[#121814] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-xs font-medium text-emerald-400 uppercase tracking-wider">
-              <Cpu className="w-4 h-4" /> Local-First Sovereign Inference
+              <Cpu className="w-4 h-4" /> Local Open-Weight Inference &bull; Deterministic Safety Active
             </div>
             <p className="text-sm text-neutral-300">
-              Quests are generated on your local machine via{" "}
+              Connected to local inference on{" "}
               <code className="font-mono text-emerald-300 text-xs bg-emerald-950/60 px-1 py-0.5 rounded border border-emerald-900">
                 http://localhost:1234/v1
               </code>
-              . When offline or unlaunched, verified safe catalog quests ensure uninterrupted development.
+              . Generates structured JSON micro-quests without cloud dependencies or telemetry.
             </p>
           </div>
 
@@ -242,7 +283,7 @@ export default function HomePage() {
         </div>
 
         {/* Quest Setup Form */}
-        <section className="space-y-6 bg-[#111713] border border-[#1b251f] rounded-2xl p-6 sm:p-8">
+        <section className="space-y-6 bg-[#111713] border border-[#1b251f] rounded-2xl p-6 sm:p-8 shadow-xl">
           <div>
             <h2 className="text-lg font-semibold text-white tracking-tight flex items-center gap-2">
               Configure Micro-Adventure
@@ -344,7 +385,7 @@ export default function HomePage() {
           <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#1a231d]">
             <div className="flex items-center gap-2 text-xs text-neutral-400">
               <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              Deterministic Safety Inspection Active (Regex Hazard Filter)
+              31 Safety &amp; Schema Tests Active (Deterministic Gatekeeper)
             </div>
 
             <button
@@ -400,7 +441,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="bg-[#111713] border border-[#1e2a22] rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
+            <div className="bg-[#111713] border border-[#1e2a22] rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden shadow-2xl">
               {/* Card Header */}
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#1b251f] pb-4">
                 <div>
@@ -474,6 +515,18 @@ export default function HomePage() {
                   ℹ️ {result.notice}
                 </p>
               )}
+
+              {/* DAY 3 HERO ACTION BUTTON: Launch Touch Grass Mode */}
+              <div className="pt-2">
+                <button
+                  onClick={handleStartQuest}
+                  className="w-full py-4 rounded-xl font-bold text-base bg-emerald-500 hover:bg-emerald-400 text-black shadow-xl shadow-emerald-950/60 transition flex items-center justify-center gap-2.5 tracking-wide hover:scale-[1.01] active:scale-[0.99]"
+                >
+                  <Play className="w-4 h-4 fill-current" />
+                  <span>Start Quest &bull; Enter Touch Grass Mode 🌿</span>
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </button>
+              </div>
             </div>
 
             {/* Structured JSON Inspector Toggle */}
@@ -483,7 +536,7 @@ export default function HomePage() {
                 onClick={() => setShowJson(!showJson)}
                 className="w-full px-4 py-2.5 text-xs font-mono text-neutral-400 hover:text-neutral-200 flex items-center justify-between transition"
               >
-                <span>🔍 Day 1 Structured JSON Data Contract Inspector</span>
+                <span>🔍 Inspect Validated Structured JSON Contract</span>
                 {showJson ? (
                   <ChevronUp className="w-4 h-4" />
                 ) : (

@@ -15,7 +15,7 @@ flowchart LR
     --> D3["<b>Day 3: Touch Grass UX</b><br/>• Quest Setup View<br/>• Minimalist Timer<br/>• Put Phone Down UX<br/><i>Gate: Working Exit Loops</i>"]
     --> D4["<b>Day 4: Journal & Stats</b><br/>• Reflection Form<br/>• Local Storage Save<br/>• Minimal Metrics<br/><i>Gate: Feature Freeze 🔒</i>"]
     --> D5["<b>Day 5: Polish & E2E</b><br/>• 100% Offline Testing<br/>• Vercel Demo Setup<br/>• Mobile Polish<br/><i>Gate: Zero Compile Errors</i>"]
-    --> D6["<b>Day 6: Submission</b><br/>• Outdoor Field Trials<br/>• Demo Video Recording<br/>• DEV Post Published<br/><i>Gate: Final Submission 🚀</i>"]
+    --> D6["<b>Day 6: Submission</b><br/>• Outdoor Field Trials<br/>• Visual Walkthrough & Docs<br/>• DEV Post Published<br/><i>Gate: Final Submission 🚀</i>"]
 ```
 
 ---
@@ -86,20 +86,16 @@ flowchart LR
 
 ---
 
-### Day 6: Outdoor Field Trials, Demo Recording & Hackathon Submission
+### Day 6: Outdoor Field Trials, Verification & Hackathon Submission
 * **Morning Objectives:**
-  * Execute real-world outdoor field tests across three physical settings (Park, Residential Sidewalk, Balcony).
-  * Record a 2-minute video demonstration:
-    1. Setting preferences in IRL Quest.
-    2. Local LM Studio terminal showing active generation with open-weight model.
-    3. Entering Touch Grass Mode and physically setting the phone down.
-    4. Short outdoor sequence showing user completing the objective.
-    5. Returning, recording reflection, and reviewing local journal entry.
+  * Execute real-world outdoor field tests across three physical settings (Urban Sidewalk, Public Park, Domestic Balcony).
+  * Compile comprehensive field testing report ([`docs/FIELD_TESTS.md`](docs/FIELD_TESTS.md)) measuring disconnect latency, safety adherence, and procedural chime audibility.
+  * Verify visual walkthrough documentation across all 4 key application states (Configurator, Touch Grass Mode, Reflection Form, Sovereign Journal).
 * **Afternoon Objectives:**
-  * Record and submit DevRelay agent session transcript.
-  * Draft and publish the official Hacktoberfest Week 1 DEV article.
+  * Record and prepare DevRelay agent session transcript.
+  * Draft and finalize the official Hacktoberfest Week 1 DEV article ([`docs/SUBMISSION.md`](docs/SUBMISSION.md)).
   * Final repository tagging (`v1.0.0-hacktoberfest`).
-* **Day 6 Deliverable / Gate:** Complete submission package published on DEV with live repository, demo video, and clear documentation.
+* **Day 6 Deliverable / Gate:** Complete submission package finalized with live repository, field test verification, and submission documentation.
 
 ---
 
@@ -129,8 +125,8 @@ The final submission post on DEV will adhere strictly to the Hacktoberfest Chall
 * Highlight the Inverted Engagement Loop: *"Software that succeeds when you put it down."*
 
 ### 3.2 Demo
-* Link to hosted preview (with clear explanation of demo sandbox mode).
-* Embedded high-definition video walkthrough showcasing the phone being placed face-down on a wooden bench while exploring outdoors.
+* Link to live repository and local setup instructions.
+* Comprehensive visual walkthrough and real-world outdoor field testing report ([`docs/FIELD_TESTS.md`](docs/FIELD_TESTS.md)) detailing user disconnect latency and offline verification.
 
 ### 3.3 Code
 * Link to public GitHub repository under MIT license.

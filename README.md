@@ -9,6 +9,10 @@
 [![Privacy](https://img.shields.io/badge/Privacy-100%25_Local-blue.svg)](#privacy-first-architecture)
 [![Tests: Vitest](https://img.shields.io/badge/Tests-36%20Passed-emerald.svg)](#testing-and-safety-verification)
 
+<p align="center">
+  <img src="public/cover.png" alt="IRL Quest Banner" width="100%" />
+</p>
+
 ---
 
 ## What is IRL Quest?

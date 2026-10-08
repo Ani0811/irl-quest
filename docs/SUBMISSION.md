@@ -41,22 +41,35 @@ User ──► Preferences ──► Local AI Generation ──► PUT PHONE DOW
 
 ---
 
-## 2. Demo
+## 2. Demo & Visual Walkthrough
 
 * **GitHub Repository:** [github.com/Ani0811/irl-quest](https://github.com/Ani0811/irl-quest)
 * **License:** MIT (100% Open-Source)
 * **Local Inference Stack:** LM Studio + `google/gemma-3-4b` or `Meta-Llama-3.1-8B-Instruct`
 
-### Screenshots & Experience Walkthrough
+![IRL Quest Cover Banner](https://raw.githubusercontent.com/Ani0811/irl-quest/main/public/cover.png)
 
-1. **Quest Configurator & Live Connection Monitor (`/`):**  
-   Displays real-time connectivity to local LM Studio instances on `127.0.0.1:1234`, model selector, category, duration, and difficulty chips.
-2. **Touch Grass Mode (`/active`):**  
-   Pure obsidian dark mode (`#050806`), epoch-based countdown clock, and explicit mandate: **"PUT YOUR PHONE AWAY. GO EXPLORE."**
-3. **Completion & Reflection (`/complete`):**  
-   Captures grounding sensory observations without infinite feeds, likes, or algorithmic loops.
-4. **Sovereign Local Journal (`/journal`):**  
-   Displays physical minutes logged outdoors and category distribution, with a direct JSON export button and 100% browser-only persistence.
+### The 4 Application States
+
+#### 1. Quest Configurator & Live Connection Monitor (`/`)
+*Real-time local LLM heartbeat check (`http://127.0.0.1:1234`), open-weight model detection (`google/gemma-3-4b`), and category/duration parameter selection.*
+
+![Quest Configurator](https://raw.githubusercontent.com/Ani0811/irl-quest/main/public/screenshots/01-configurator.png)
+
+#### 2. Touch Grass Mode (`/active`)
+*Obsidian anti-distraction interface (`#050806`), epoch-calculated countdown clock, and the core mandate: **"PUT YOUR PHONE AWAY. GO EXPLORE."***
+
+![Touch Grass Mode](https://raw.githubusercontent.com/Ani0811/irl-quest/main/public/screenshots/02-touch-grass-mode.png)
+
+#### 3. Completion & Reflection (`/complete`)
+*Grounding sensory observations captured immediately upon return—no infinite feeds, likes, or algorithmic rabbit holes.*
+
+![Completion and Reflection](https://raw.githubusercontent.com/Ani0811/irl-quest/main/public/screenshots/03-reflection.png)
+
+#### 4. Sovereign Local Journal & Stats (`/journal`)
+*Offline browser-only persistence tracking total real-world minutes outdoors, category distribution, and one-click sovereign JSON data export.*
+
+![Sovereign Journal](https://raw.githubusercontent.com/Ani0811/irl-quest/main/public/screenshots/04-sovereign-journal.png)
 
 ### Real-World Field Verification (Tested in Airplane Mode)
 
